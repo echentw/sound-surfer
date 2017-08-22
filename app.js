@@ -6,6 +6,8 @@ const port = 3000;
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
 app.set('port', port);
 
 app.get('/', (req, res) => res.sendFile('index.html', {root: __dirname}));

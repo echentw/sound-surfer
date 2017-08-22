@@ -6,6 +6,8 @@
     "start": "gulp"
   },
   "devDependencies": {
+    "@types/jquery": "^3.2.12",
+    "@types/soundjs": "^0.6.27",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-es2015": "^6.24.1",
@@ -17,6 +19,7 @@
   },
   "dependencies": {
     "express": "^4.15.4",
+    "jquery": "^3.2.1",
     "path": "^0.12.7"
   }
 }
