@@ -1,6 +1,7 @@
 {
   "files": [
     "src/Main.ts",
+    "src/Conductor.ts",
     "src/SoundPlayer.ts"
   ],
   "compilerOptions": {

@@ -1,10 +1,15 @@
 export class SoundPlayer {
-  id: string = Math.random().toString(36).slice(2)
-  songPlayer: createjs.AbstractSoundInstance
+  private readonly id: string = Math.random().toString(36).slice(2);
+  private readonly path: string;
+  private songPlayer: createjs.AbstractSoundInstance;
 
-  load(path: string): Promise<null> {
+  constructor(path: string) {
+    this.path = path;
+  }
+
+  load(): Promise<null> {
     return new Promise((resolve) => {
-      createjs.Sound.registerSound(path, this.id);
+      createjs.Sound.registerSound(this.path, this.id);
       createjs.Sound.on('fileload', (eventObj: any) => {
         if (eventObj['id'] == this.id) {
           this.songPlayer = createjs.Sound.createInstance(this.id);
