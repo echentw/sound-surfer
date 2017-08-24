@@ -38,4 +38,12 @@ export class SoundPlayer {
   unpause() {
     this.songPlayer.paused = false;
   }
+
+  position(): number {
+    return this.songPlayer.position;
+  }
+
+  duration(): number {
+    return this.songPlayer.duration;
+  }
 }

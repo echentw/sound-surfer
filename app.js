@@ -6,6 +6,7 @@ const port = 3000;
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'src', 'css')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.set('port', port);

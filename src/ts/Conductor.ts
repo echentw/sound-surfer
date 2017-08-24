@@ -10,10 +10,30 @@ export class Conductor {
   }
 
   load(): Promise<null> {
-    return this.musicPlayer.load()
+    return this.musicPlayer.load();
   }
 
   start() {
-    this.musicPlayer.play()
+    this.musicPlayer.play();
+  }
+
+  stop() {
+    this.musicPlayer.stop();
+  }
+
+  pause() {
+    this.musicPlayer.pause();
+  }
+
+  unpause() {
+    this.musicPlayer.unpause();
+  }
+
+  position(): number {
+    return this.musicPlayer.position();
+  }
+
+  duration(): number {
+    return this.musicPlayer.duration();
   }
 }
