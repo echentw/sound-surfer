@@ -1,38 +1,45 @@
 import * as $ from 'jquery';
 
 import { Conductor } from './Conductor';
+import { Wave } from './Wave';
 
 $(document).ready(main);
 
 async function main() {
   const conductor = new Conductor('Mijuku Dreamer');
+
+  const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
+  const wave = new Wave(canvas);
+
   await conductor.load();
   conductor.start();
 
-  const canvasElement = document.getElementById('game-canvas') as HTMLCanvasElement;
-
   requestAnimationFrame(update);
 
-  let startTime: number = null;
   function update(time: number) {
-    if (!startTime) startTime = time;
     updateDimensions();
+    clearCanvas();
+
+    wave.draw(conductor.position());
+
     requestAnimationFrame(update);
   }
 
   function updateDimensions() {
     let ratio = 0.6;
     if (window.innerWidth * ratio < window.innerHeight) {
-      canvasElement.width = window.innerWidth;
-      canvasElement.height = canvasElement.width * ratio;
+      canvas.width = window.innerWidth;
+      canvas.height = canvas.width * ratio;
     } else {
-      canvasElement.height = window.innerHeight;
-      canvasElement.width = canvasElement.height / ratio;
+      canvas.height = window.innerHeight;
+      canvas.width = canvas.height / ratio;
     }
+  }
 
-    const context = canvasElement.getContext('2d');
+  function clearCanvas() {
+    const context = canvas.getContext('2d');
     context.fillStyle = 'black';
-    context.fillRect(0, 0, canvasElement.width, canvasElement.height);
+    context.fillRect(0, 0, canvas.width, canvas.height);
   }
 }
 
