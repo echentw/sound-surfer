@@ -6,7 +6,7 @@ export class Conductor {
 
   constructor(songName: string) {
     this.songName = songName;
-    this.musicPlayer = new SoundPlayer('assets/mijuku-dreamer.mp3');
+    this.musicPlayer = new SoundPlayer('assets/music/mijuku-dreamer.mp3');
   }
 
   load(): Promise<null> {

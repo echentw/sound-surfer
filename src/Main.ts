@@ -2,7 +2,18 @@ import * as $ from 'jquery';
 
 import { Conductor } from './Conductor';
 
-$(document).ready(() => {
+$(document).ready(start);
+
+async function start() {
   const conductor = new Conductor('Mijuku Dreamer');
-  conductor.load().then(() => conductor.start());
+  await conductor.load();
+  conductor.start();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.keyCode == 37) {
+    console.log('left was pressed');
+  } else if (e.keyCode == 39) {
+    console.log('right was pressed');
+  }
 });
