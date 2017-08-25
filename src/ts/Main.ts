@@ -17,11 +17,15 @@ async function main() {
   conductor.start();
   requestAnimationFrame(update);
 
+  // Called at every frame, re-renders the entire canvas.
   function update(time: number) {
     updateDimensions();
     clearCanvas();
 
-    wave.draw(conductor.position());
+    const songPosition = conductor.position();
+    drawHorizontalLine();
+    wave.draw(songPosition);
+    drawPlayer(songPosition);
 
     requestAnimationFrame(update);
   }
@@ -42,6 +46,37 @@ async function main() {
     const context = canvas.getContext('2d');
     context.fillStyle = 'black';
     context.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  const scaleFactorX = 350 / 793;
+  const scaleFactorY = 20 / 973;
+  function drawPlayer(songPosition: number) {
+    const context = canvas.getContext('2d');
+
+    const amplitude = canvas.height * 0.25;
+    const yOffset = canvas.height * 0.5;
+    const frequency = 2 * Math.PI / canvas.width;
+    const theta = songPosition * Math.PI / conductor.songData.crotchet;
+
+    const x = scaleFactorX * canvas.width;
+    const y = amplitude * Math.sin(frequency * x + theta) + yOffset;
+    const radius = scaleFactorY * canvas.width;
+
+    context.beginPath();
+    context.arc(x, y, radius, 0, 2 * Math.PI, false);
+    context.fillStyle = 'green';
+    context.fill();
+  }
+
+  function drawHorizontalLine() {
+    const context = canvas.getContext('2d');
+
+    context.beginPath();
+    context.lineWidth = 5;
+    context.strokeStyle = 'grey';
+    context.moveTo(0, canvas.height * 0.5);
+    context.lineTo(canvas.width, canvas.height * 0.5);
+    context.stroke();
   }
 }
 
