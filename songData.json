@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Mijuku Dreamer",
+    "tag": "mijukuDreamer",
+    "numBeats": 80,
+    "songDurationMillis": 60050,
+    "offsetMillis": 2320
+  }, {
+    "name": "Shape of You",
+    "tag": "shapeOfYou",
+    "numBeats": 30,
+    "songDurationMillis": 12500,
+    "offsetMillis": 2320
+  }
+]

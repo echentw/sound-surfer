@@ -1,9 +1,18 @@
 import * as $ from 'jquery';
+import * as _ from 'lodash';
 
 import { Conductor } from './Conductor';
 import { Wave } from './Wave';
 
 $(document).ready(main);
+
+interface SongData {
+  name: string;
+  tag: string;
+  numBeats: number;
+  songDurationMillis: number;
+  offsetMillis: number;
+}
 
 async function main() {
   const conductor = new Conductor('Mijuku Dreamer');
@@ -11,7 +20,9 @@ async function main() {
   const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
   const wave = new Wave(canvas);
 
-  await conductor.load();
+  const [, songDataArray] = await Promise.all([conductor.load(), $.get('./songData')]);
+  const songData = _.find(songDataArray, {'name': 'Mijuku Dreamer'});
+
   conductor.start();
 
   requestAnimationFrame(update);
