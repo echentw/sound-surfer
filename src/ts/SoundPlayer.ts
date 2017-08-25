@@ -13,13 +13,13 @@ export class SoundPlayer {
 
   load(): Promise<null> {
     return new Promise((resolve) => {
-      Sound.registerSound(this.path, this.id);
       Sound.on('fileload', (eventObj: any) => {
         if (eventObj['id'] == this.id) {
           this.songPlayer = Sound.createInstance(this.id);
           resolve();
         }
       });
+      Sound.registerSound(this.path, this.id);
     });
   }
 

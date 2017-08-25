@@ -16,9 +16,6 @@ app.set('port', port);
 // Render the page.
 app.get('/', (req, res) => res.sendFile('index.html', {root: __dirname}));
 
-// Respond with `songData` object.
-app.get('/songData', (req, res) => res.send(require('./songData.json')));
-
 // Start the server.
 const server = http.createServer(app);
 server.listen(port)
