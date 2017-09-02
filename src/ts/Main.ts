@@ -3,6 +3,10 @@ import * as $ from 'jquery';
 import { Conductor } from './Conductor';
 import { Wave } from './Wave';
 
+$(window).resize(function() {
+  console.log('(' + window.innerWidth + ', ' + window.innerHeight + ')');
+});
+
 $(document).ready(main);
 
 async function main() {
@@ -53,7 +57,7 @@ async function main() {
   function drawPlayer(songPosition: number) {
     const context = canvas.getContext('2d');
 
-    const amplitude = canvas.height * 0.25;
+    const amplitude = canvas.height * 0.25 * 0.4;
     const yOffset = canvas.height * 0.5;
     const frequency = 2 * Math.PI / canvas.width;
     const theta = songPosition * Math.PI / conductor.songData.crotchet;

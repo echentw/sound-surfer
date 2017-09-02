@@ -3,7 +3,7 @@ export class Wave {
   private readonly context: CanvasRenderingContext2D;
 
   private readonly color = 'white';
-  private readonly width = 5;
+  private readonly width = 7;
 
   private readonly w: number;
 
@@ -15,7 +15,7 @@ export class Wave {
   }
 
   draw(songPosition: number) {
-    const amplitude = this.canvas.height * 0.25;
+    const amplitude = this.canvas.height * 0.25 * 0.4;
     const yOffset = this.canvas.height * 0.5;
     const frequency = 2 * Math.PI / this.canvas.width;
     const theta = songPosition * this.w;
