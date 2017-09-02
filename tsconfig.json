@@ -3,7 +3,9 @@
     "src/ts/Main.ts",
     "src/ts/Conductor.ts",
     "src/ts/SoundPlayer.ts",
-    "src/ts/Wave.ts"
+    "src/ts/GameObject.ts",
+    "src/ts/Wave.ts",
+    "src/ts/Player.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,

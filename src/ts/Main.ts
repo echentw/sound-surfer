@@ -2,10 +2,7 @@ import * as $ from 'jquery';
 
 import { Conductor } from './Conductor';
 import { Wave } from './Wave';
-
-$(window).resize(function() {
-  console.log('(' + window.innerWidth + ', ' + window.innerHeight + ')');
-});
+import { Player } from './Player';
 
 $(document).ready(main);
 
@@ -16,6 +13,15 @@ async function main() {
   await conductor.load();
 
   const wave = new Wave(canvas, conductor.songData.crotchet);
+  const player = new Player(canvas, wave);
+
+  $(window).resize(resize);
+  function resize() {
+    resizeCanvas();
+    wave.resize(canvas.width, canvas.height);
+    player.resize(canvas.width, canvas.height);
+  }
+  resize();
 
   // Start the game.
   conductor.start();
@@ -23,19 +29,18 @@ async function main() {
 
   // Called at every frame, re-renders the entire canvas.
   function update(time: number) {
-    updateDimensions();
     clearCanvas();
 
     const songPosition = conductor.position();
     drawHorizontalLine();
     wave.draw(songPosition);
-    drawPlayer(songPosition);
+    player.draw(songPosition);
 
     requestAnimationFrame(update);
   }
 
   // Update the width and height of the canvas element.
-  function updateDimensions() {
+  function resizeCanvas() {
     let ratio = 0.6;
     if (window.innerWidth * ratio < window.innerHeight) {
       canvas.width = window.innerWidth;
@@ -50,26 +55,6 @@ async function main() {
     const context = canvas.getContext('2d');
     context.fillStyle = 'black';
     context.fillRect(0, 0, canvas.width, canvas.height);
-  }
-
-  const scaleFactorX = 350 / 793;
-  const scaleFactorY = 20 / 973;
-  function drawPlayer(songPosition: number) {
-    const context = canvas.getContext('2d');
-
-    const amplitude = canvas.height * 0.25 * 0.4;
-    const yOffset = canvas.height * 0.5;
-    const frequency = 2 * Math.PI / canvas.width;
-    const theta = songPosition * Math.PI / conductor.songData.crotchet;
-
-    const x = scaleFactorX * canvas.width;
-    const y = amplitude * Math.sin(frequency * x + theta) + yOffset;
-    const radius = scaleFactorY * canvas.width;
-
-    context.beginPath();
-    context.arc(x, y, radius, 0, 2 * Math.PI, false);
-    context.fillStyle = 'green';
-    context.fill();
   }
 
   function drawHorizontalLine() {
