@@ -3,6 +3,7 @@ import * as $ from 'jquery';
 import { Conductor } from './Conductor';
 import { Wave } from './Wave';
 import { Player } from './Player';
+import { Midline } from './Midline';
 
 $(document).ready(main);
 
@@ -15,11 +16,14 @@ async function main() {
   const wave = new Wave(canvas, conductor.songData.crotchet);
   const player = new Player(canvas, wave);
 
+  const midline = new Midline(canvas);
+
   $(window).resize(resize);
   function resize() {
     resizeCanvas();
     wave.resize(canvas.width, canvas.height);
     player.resize(canvas.width, canvas.height);
+    midline.resize(canvas.width, canvas.height);
   }
   resize();
 
@@ -31,8 +35,11 @@ async function main() {
   function update(time: number) {
     clearCanvas();
 
+    // Draw static elements.
+    midline.draw();
+
+    // Draw dynamic elements (elements that rely on song position).
     const songPosition = conductor.position();
-    drawHorizontalLine();
     wave.draw(songPosition);
     player.draw(songPosition);
 
@@ -55,17 +62,6 @@ async function main() {
     const context = canvas.getContext('2d');
     context.fillStyle = 'black';
     context.fillRect(0, 0, canvas.width, canvas.height);
-  }
-
-  function drawHorizontalLine() {
-    const context = canvas.getContext('2d');
-
-    context.beginPath();
-    context.lineWidth = 5;
-    context.strokeStyle = 'grey';
-    context.moveTo(0, canvas.height * 0.5);
-    context.lineTo(canvas.width, canvas.height * 0.5);
-    context.stroke();
   }
 }
 

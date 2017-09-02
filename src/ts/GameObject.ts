@@ -3,7 +3,7 @@ export abstract class DynamicGameObject {
   abstract draw(songPosition: number): void;
 }
 
-abstract class StaticGameObject {
+export abstract class StaticGameObject {
   abstract resize(width: number, height: number): void;
   abstract draw(): void;
 }

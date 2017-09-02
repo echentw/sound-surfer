@@ -5,7 +5,9 @@
     "src/ts/SoundPlayer.ts",
     "src/ts/GameObject.ts",
     "src/ts/Wave.ts",
-    "src/ts/Player.ts"
+    "src/ts/Player.ts",
+    "src/ts/Midline.ts",
+    "src/ts/CanvasWrapper.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,
