@@ -1,8 +1,6 @@
 import { StaticGameObject } from './GameObject';
 
 export class Midline extends StaticGameObject {
-  private readonly context: CanvasRenderingContext2D;
-
   private readonly width = 5;
   private readonly color = 'grey';
 
@@ -10,8 +8,7 @@ export class Midline extends StaticGameObject {
   private y: number;
 
   constructor(canvas: HTMLCanvasElement) {
-    super();
-    this.context = canvas.getContext('2d');
+    super(canvas);
     this.canvasWidth = canvas.width;
     this.y = canvas.height * 0.5;
   }

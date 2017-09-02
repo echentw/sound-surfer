@@ -2,7 +2,6 @@ import { DynamicGameObject } from './GameObject';
 import { Wave } from './Wave';
 
 export class Player extends DynamicGameObject {
-  private readonly context: CanvasRenderingContext2D;
   private readonly wave: Wave;
 
   private readonly color = 'green';
@@ -14,8 +13,7 @@ export class Player extends DynamicGameObject {
   private radius: number;
 
   constructor(canvas: HTMLCanvasElement, wave: Wave) {
-    super()
-    this.context = canvas.getContext('2d');
+    super(canvas)
     this.wave = wave;
     this.resize(canvas.width, canvas.height);
   }

@@ -1,7 +1,6 @@
 import { DynamicGameObject } from './GameObject';
 
 export class Wave extends DynamicGameObject {
-  private readonly context: CanvasRenderingContext2D;
   private canvasWidth: number;
 
   private readonly color = 'white';
@@ -14,8 +13,7 @@ export class Wave extends DynamicGameObject {
   public frequency: number;
 
   constructor(canvas: HTMLCanvasElement, crotchet: number) {
-    super();
-    this.context = canvas.getContext('2d');
+    super(canvas);
     this.w = Math.PI / crotchet;
     this.resize(canvas.width, canvas.height);
   }
