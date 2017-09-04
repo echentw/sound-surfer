@@ -14,25 +14,19 @@ async function main() {
   const canvasWrapper = new CanvasWrapper(canvas);
 
   const conductor = new Conductor('Mijuku Dreamer');
-  await conductor.load();
+  const tambourine = new SfxPlayer('tambourine');
+  await Promise.all([conductor.load(), tambourine.load()]);
 
   const notes = new Notes(canvas, conductor.songData.crotchet, 0.25);
-
   const player = new Player(canvas, 0.25, notes);
-
   const midline = new Midline(canvas);
 
   initializeGame();
   startGame();
 
-  // TODO: bundle this await with the one above it
-  const tambourineSfx = new SfxPlayer('tambourine');
-  await tambourineSfx.load();
-
   function initializeGame() {
-    // Add a window-resize event listener.
+    // Listen for changes in the window dimensions and adapt.
     $(window).resize(resize);
-
     resize();
   }
 
@@ -44,15 +38,10 @@ async function main() {
   // Make the game scale with the browser window.
   function resize() {
     canvasWrapper.resize();
-
-    // Resize static elements.
     midline.resize(canvas.width, canvas.height);
-
-    // Resize dynamic elements.
     notes.resize(canvas.width, canvas.height);
     player.resize(canvas.width, canvas.height);
   }
-
 
   // Called at every frame, re-renders the entire canvas.
   function update(time: number) {
@@ -69,10 +58,11 @@ async function main() {
     requestAnimationFrame(update);
   }
 
+  // Listen for user input.
   document.addEventListener('keydown', (e) => {
     if (e.keyCode == 32) {
       // Spacebar is pressed
-      tambourineSfx.play();
+      tambourine.play();
     }
   });
 }
