@@ -1,6 +1,6 @@
 import * as Collections from 'typescript-collections';
 
-import { Wave2 as Wave } from './Wave';
+import { Wave } from './Wave';
 
 export class Notes {
   private canvas: HTMLCanvasElement;
@@ -18,16 +18,28 @@ export class Notes {
   private missedNotes = new Collections.Queue<Wave>();
 
   // The number of milliseconds that the note stays on the screen before it needs to get hit.
-  private preHitTime = 1000;
+  private readonly preHitTime = 1000;
 
   // Time (in milliseconds) that the player has before and after the note is supposed
   // to be hit, to hit the note.
   private hitMargin = 200;
 
-  constructor(canvas: HTMLCanvasElement, crotchet: number) {
+  // TODO: some stuff needed to instantiate waves
+  private playerScaleX: number;
+
+  constructor(canvas: HTMLCanvasElement, crotchet: number, playerScaleX: number) {
     this.canvas = canvas;
     this.crotchet = crotchet;
+
+    this.playerScaleX = playerScaleX;
+
     this.load();
+  }
+
+  resize(width: number, height: number) {
+    this.queuedNotes.forEach((wave) => wave.resize(width, height));
+    this.currentNotes.forEach((wave) => wave.resize(width, height));
+    this.missedNotes.forEach((wave) => wave.resize(width, height));
   }
 
   draw(songPosition: number) {
@@ -70,8 +82,10 @@ export class Notes {
 
   load() {
     // TODO: load notes correctly
-    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 1.0, 1.0));
-    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 2.0, 1.0));
-    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 3.0, 1.0));
+    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 2.0, 3.0, true, this.playerScaleX, this.preHitTime));
+    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 3.0, 3.5, false, this.playerScaleX, this.preHitTime));
+    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 3.5, 4.0, true, this.playerScaleX, this.preHitTime));
+    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 4.0, 4.2, false, this.playerScaleX, this.preHitTime));
+    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 4.2, 5.0, true, this.playerScaleX, this.preHitTime));
   }
 }

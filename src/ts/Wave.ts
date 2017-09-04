@@ -1,69 +1,75 @@
 import { DynamicGameObject } from './GameObject';
 
 export class Wave extends DynamicGameObject {
-  private canvasWidth: number;
-
   private readonly color = 'white';
-  private readonly lineWidth = 7;
+  private readonly lineWidth = 3;
 
-  public readonly w: number;
+  private canvasWidth: number;
+  private yOffset: number;
 
-  public amplitude: number;
-  public yOffset: number;
-  public frequency: number;
+  // The timestamps (ms) that the wave's left and right endpoints should
+  // reach the player circle.
+  public start: number;
+  public end: number;
 
-  constructor(canvas: HTMLCanvasElement, crotchet: number) {
+  // The duration (ms) between the start and end of the wave.
+  private duration: number;
+
+  // The x-coordinate of the player circle's center.
+  private playerPosition: number;
+
+  // `playerPosition` = `playerScaleX` * (width of the canvas)
+  private playerScaleX: number;
+
+  private preHitTime: number;
+
+  private amplitude: number;
+
+  private sign: number;
+
+  constructor(canvas: HTMLCanvasElement,
+              crotchet: number,
+              start: number,
+              end: number,
+              upright: boolean,
+              playerScaleX: number,
+              preHitTime: number) {
     super(canvas);
-    this.w = Math.PI / crotchet;
+
+    this.start = start * crotchet;
+    this.end = end * crotchet;
+    this.duration = this.end - this.start;
+
+    this.playerScaleX = playerScaleX;
+    this.preHitTime = preHitTime;
+
+    this.sign = upright ? 1 : -1;
+
     this.resize(canvas.width, canvas.height);
   }
 
   resize(width: number, height: number) {
-    this.amplitude = height * 0.25 * 0.5;
+    this.playerPosition = this.playerScaleX * width;
     this.yOffset = height * 0.5;
-    this.frequency = 2 * Math.PI / width;
     this.canvasWidth = width;
+    this.amplitude = 0.15 * this.sign * (this.end - this.start) / this.preHitTime * (width - this.playerPosition);
   }
 
+  // y = sin(k * (x - c))
   draw(songPosition: number) {
-    const theta = this.w * songPosition;
+    const x0 = (this.start - songPosition) / this.preHitTime * (this.canvasWidth - this.playerPosition) + this.playerPosition;
+    const x1 = (this.end - songPosition) / this.preHitTime * (this.canvasWidth - this.playerPosition) + this.playerPosition;
+    const k = Math.PI / (x1 - x0);
 
     this.context.beginPath();
     this.context.lineWidth = this.lineWidth;
     this.context.strokeStyle = this.color;
-    this.context.moveTo(0, this.amplitude * Math.sin(theta) + this.yOffset);
-    for (let x = 0; x < this.canvasWidth; ++x) {
-      const y = this.amplitude * Math.sin(this.frequency * x + theta) + this.yOffset;
+    this.context.moveTo(x0, this.yOffset);
+
+    for (let x = x0; x < x1; ++x) {
+      const y = this.amplitude * Math.sin(k * (x - x0)) + this.yOffset;
       this.context.lineTo(x, y);
     }
     this.context.stroke();
-  }
-}
-
-export class Wave2 extends DynamicGameObject {
-  private readonly color = 'white';
-  private readonly lineWidth = 3;
-
-  // The timestamp (in milliseconds) that the wave should begin to be rendered.
-  public start: number;
-
-  // The # of beats between the left and right endpoints of the wave.
-  private beats: number;
-
-  constructor(canvas: HTMLCanvasElement, crotchet: number, start: number, beats: number) {
-    super(canvas);
-
-    this.start = start;
-    this.beats = beats;
-
-    this.resize(canvas.width, canvas.height);
-  }
-
-  resize(width: number, height: number) {
-    // TODO: implement me!
-  }
-
-  draw(songPosition: number) {
-    // TODO: implement me!
   }
 }

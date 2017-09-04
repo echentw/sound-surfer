@@ -1,10 +1,10 @@
 import * as $ from 'jquery';
 
 import { Conductor } from './Conductor';
-import { Wave } from './Wave';
 import { Player } from './Player';
 import { Midline } from './Midline';
 import { CanvasWrapper } from './CanvasWrapper';
+import { Notes } from './Notes';
 
 $(document).ready(main);
 
@@ -15,8 +15,9 @@ async function main() {
   const conductor = new Conductor('Mijuku Dreamer');
   await conductor.load();
 
-  const wave = new Wave(canvas, conductor.songData.crotchet);
-  const player = new Player(canvas, wave);
+  const notes = new Notes(canvas, conductor.songData.crotchet, 0.25);
+
+  // const player = new Player(canvas, wave);
 
   const midline = new Midline(canvas);
 
@@ -38,8 +39,8 @@ async function main() {
   // Make the game scale with the browser window.
   function resize() {
     canvasWrapper.resize();
-    wave.resize(canvas.width, canvas.height);
-    player.resize(canvas.width, canvas.height);
+    notes.resize(canvas.width, canvas.height);
+    // player.resize(canvas.width, canvas.height);
     midline.resize(canvas.width, canvas.height);
   }
 
@@ -53,8 +54,8 @@ async function main() {
 
     // Draw dynamic elements (elements that rely on song position).
     const songPosition = conductor.position();
-    wave.draw(songPosition);
-    player.draw(songPosition);
+    notes.draw(songPosition);
+    // player.draw(songPosition);
 
     requestAnimationFrame(update);
   }
