@@ -1,5 +1,6 @@
 import * as $ from 'jquery';
 
+import { SfxPlayer } from './SfxPlayer';
 import { Conductor } from './Conductor';
 import { Player } from './Player';
 import { Midline } from './Midline';
@@ -23,6 +24,10 @@ async function main() {
 
   initializeGame();
   startGame();
+
+  // TODO: bundle this await with the one above it
+  const tambourineSfx = new SfxPlayer('tambourine');
+  await tambourineSfx.load();
 
   function initializeGame() {
     // Add a window-resize event listener.
@@ -63,12 +68,11 @@ async function main() {
 
     requestAnimationFrame(update);
   }
-}
 
-document.addEventListener('keydown', (e) => {
-  if (e.keyCode == 37) {
-    console.log('left was pressed');
-  } else if (e.keyCode == 39) {
-    console.log('right was pressed');
-  }
-});
+  document.addEventListener('keydown', (e) => {
+    if (e.keyCode == 32) {
+      // Spacebar is pressed
+      tambourineSfx.play();
+    }
+  });
+}
