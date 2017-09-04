@@ -7,7 +7,8 @@
     "src/ts/Wave.ts",
     "src/ts/Player.ts",
     "src/ts/Midline.ts",
-    "src/ts/CanvasWrapper.ts"
+    "src/ts/CanvasWrapper.ts",
+    "src/ts/Notes.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,

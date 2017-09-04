@@ -39,3 +39,31 @@ export class Wave extends DynamicGameObject {
     this.context.stroke();
   }
 }
+
+export class Wave2 extends DynamicGameObject {
+  private readonly color = 'white';
+  private readonly lineWidth = 3;
+
+  // The timestamp (in milliseconds) that the wave should begin to be rendered.
+  public start: number;
+
+  // The # of beats between the left and right endpoints of the wave.
+  private beats: number;
+
+  constructor(canvas: HTMLCanvasElement, crotchet: number, start: number, beats: number) {
+    super(canvas);
+
+    this.start = start;
+    this.beats = beats;
+
+    this.resize(canvas.width, canvas.height);
+  }
+
+  resize(width: number, height: number) {
+    // TODO: implement me!
+  }
+
+  draw(songPosition: number) {
+    // TODO: implement me!
+  }
+}
