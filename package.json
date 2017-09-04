@@ -14,7 +14,7 @@
     "babel-loader": "^7.1.2",
     "babel-preset-es2015": "^6.24.1",
     "express": "^4.15.4",
-    "gulp": "^3.9.1",
+    "gulp": "github:gulpjs/gulp#4.0",
     "gulp-develop-server": "^0.5.2",
     "gulp-typescript": "^3.2.1",
     "jquery": "^3.2.1",

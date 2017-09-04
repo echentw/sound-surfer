@@ -5,15 +5,13 @@ const webpack = require('webpack-stream');
 const ts = require('gulp-typescript');
 const tsProject = ts.createProject("tsconfig.json");
 
-gulp.task('build-js', ['compile-ts', 'bundle-js']);
-
-gulp.task('compile-ts', () => {
-  tsProject.src()
+function compileTS() {
+  return tsProject.src()
     .pipe(tsProject())
     .js.pipe(gulp.dest('build'));
-});
+}
 
-gulp.task('bundle-js', () => {
+function bundleJS() {
   const webpacky = webpack({
     module: {
       loaders: [{
@@ -30,21 +28,27 @@ gulp.task('bundle-js', () => {
     },
   });
   webpacky.on('error', (error) => console.log(error));
-  gulp.src('./build/main.js')
+  return gulp.src('./build/main.js')
     .pipe(webpacky)
     .pipe(gulp.dest('./public/'));
-});
+}
 
-gulp.task('default', ['build-js', 'server:start'], () => {
-  gulp.watch('./src/**/*.ts', ['build-js']);
-});
+const buildJS = gulp.series(compileTS, bundleJS);
 
-gulp.task('server:start', () => {
+function startServer() {
   server.listen({path: './app.js'}, (error) => {
     if (error) {
       console.log(error);
     }
   });
-});
+}
 
-gulp.task('server:restart', () => server.restart());
+function restartServer() {
+  server.restart();
+}
+
+function watchFiles() {
+  gulp.watch('./src/**/*.ts', gulp.series(buildJS));
+}
+
+gulp.task('default', gulp.series(buildJS, startServer, watchFiles));
