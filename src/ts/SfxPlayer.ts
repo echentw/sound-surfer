@@ -4,35 +4,21 @@ import { SoundPlayer } from './SoundPlayer';
 // and they overlap sometimes.
 export class SfxPlayer {
   private readonly numPlayers = 6;
-  private readonly players: Array<SoundPlayer>;
+  private readonly players = Array<SoundPlayer>();
 
   private currentId = 0;
 
-  // TODO: need to sleep, fix this jankness tomorrow
   constructor(sfxName: string) {
-    this.players = [
-      new SoundPlayer(`/assets/sfx/${sfxName}.mp3`),
-      new SoundPlayer(`/assets/sfx/${sfxName}.mp3`),
-      new SoundPlayer(`/assets/sfx/${sfxName}.mp3`),
-      new SoundPlayer(`/assets/sfx/${sfxName}.mp3`),
-      new SoundPlayer(`/assets/sfx/${sfxName}.mp3`),
-      new SoundPlayer(`/assets/sfx/${sfxName}.mp3`)
-    ];
+    for (let i = 0; i < this.numPlayers; ++i) {
+      this.players.push(new SoundPlayer(`/assets/sfx/${sfxName}.mp3`));
+    }
   }
 
   load() {
-    return Promise.all([
-      this.players[0].load(),
-      this.players[1].load(),
-      this.players[2].load(),
-      this.players[3].load(),
-      this.players[4].load(),
-      this.players[5].load()
-    ]);
+    return Promise.all(this.players.map((player) => player.load()));
   }
 
   play() {
-    console.log(this.currentId);
     this.players[this.currentId].play();
     this.currentId = (this.currentId + 1) % this.numPlayers;
   }
