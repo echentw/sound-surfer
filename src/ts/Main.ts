@@ -5,7 +5,7 @@ import { Conductor } from './Conductor';
 import { Player } from './Player';
 import { Midline } from './Midline';
 import { CanvasWrapper } from './CanvasWrapper';
-import { Notes } from './Notes';
+import { WaveGenerator } from './WaveGenerator';
 
 $(document).ready(main);
 
@@ -17,8 +17,8 @@ async function main() {
   const tambourine = new SfxPlayer('tambourine');
   await Promise.all([conductor.load(), tambourine.load()]);
 
-  const notes = new Notes(canvas, conductor.songData.crotchet, 0.25);
-  const player = new Player(canvas, 0.25, notes);
+  const waveGenerator = new WaveGenerator(canvas, conductor.songData.crotchet, 0.25);
+  const player = new Player(canvas, 0.25, waveGenerator);
   const midline = new Midline(canvas);
 
   initializeGame();
@@ -39,7 +39,7 @@ async function main() {
   function resize() {
     canvasWrapper.resize();
     midline.resize(canvas.width, canvas.height);
-    notes.resize(canvas.width, canvas.height);
+    waveGenerator.resize(canvas.width, canvas.height);
     player.resize(canvas.width, canvas.height);
   }
 
@@ -52,7 +52,7 @@ async function main() {
 
     // Draw dynamic elements (elements that rely on song position).
     const songPosition = conductor.position();
-    notes.draw(songPosition);
+    waveGenerator.draw(songPosition);
     player.draw(songPosition);
 
     requestAnimationFrame(update);

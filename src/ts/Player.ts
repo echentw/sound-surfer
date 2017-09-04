@@ -1,8 +1,8 @@
 import { DynamicGameObject } from './GameObject';
-import { Notes } from './Notes';
+import { WaveGenerator } from './WaveGenerator';
 
 export class Player extends DynamicGameObject {
-  private readonly notes: Notes;
+  private readonly waveGenerator: WaveGenerator;
 
   private readonly color = 'green';
 
@@ -14,9 +14,9 @@ export class Player extends DynamicGameObject {
 
   private yOffset: number;
 
-  constructor(canvas: HTMLCanvasElement, playerScaleX: number, notes: Notes) {
+  constructor(canvas: HTMLCanvasElement, playerScaleX: number, waveGenerator: WaveGenerator) {
     super(canvas)
-    this.notes = notes;
+    this.waveGenerator = waveGenerator;
     this.scaleX = playerScaleX;
     this.scaleRadius = this.scaleX * 0.05;
     this.resize(canvas.width, canvas.height);
@@ -29,7 +29,7 @@ export class Player extends DynamicGameObject {
   }
 
   draw(songPosition: number) {
-    const y = this.notes.getPlayerY(songPosition);
+    const y = this.waveGenerator.getPlayerY(songPosition);
 
     this.context.beginPath();
     this.context.arc(this.x, y, this.radius, 0, 2 * Math.PI, false);
