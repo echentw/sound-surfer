@@ -33,8 +33,6 @@ function bundleJS() {
     .pipe(gulp.dest('./public/'));
 }
 
-const buildJS = gulp.series(compileTS, bundleJS);
-
 function startServer() {
   server.listen({path: './app.js'}, (error) => {
     if (error) {
@@ -47,8 +45,10 @@ function restartServer() {
   server.restart();
 }
 
-function watchFiles() {
-  gulp.watch('./src/**/*.ts', gulp.series(buildJS));
-}
+gulp.task('build', gulp.series(compileTS, bundleJS));
 
-gulp.task('default', gulp.series(buildJS, startServer, watchFiles));
+gulp.task('watch', () => {
+  gulp.watch('./src/**/*.ts', gulp.series('build'));
+});
+
+gulp.task('default', gulp.series('build', gulp.parallel(startServer, 'watch')));
