@@ -75,17 +75,17 @@ export class Notes {
 
   private deleteMissedNotes(songPosition: number) {
     while (this.missedNotes.size() > 0 &&
-           songPosition > this.missedNotes.peek().start + 1000) {
+           songPosition > this.missedNotes.peek().end + 500) {
       this.missedNotes.dequeue();
     }
   }
 
   load() {
     // TODO: load notes correctly
-    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 2.0, 3.0, true, this.playerScaleX, this.preHitTime));
-    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 3.0, 3.5, false, this.playerScaleX, this.preHitTime));
-    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 3.5, 4.0, true, this.playerScaleX, this.preHitTime));
-    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 4.0, 4.2, false, this.playerScaleX, this.preHitTime));
-    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 4.2, 5.0, true, this.playerScaleX, this.preHitTime));
+    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 3.0, 4.0, true, this.playerScaleX, this.preHitTime));
+    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 4.0, 5.0, false, this.playerScaleX, this.preHitTime));
+    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 5.0, 5.5, true, this.playerScaleX, this.preHitTime));
+    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 5.5, 6.0, false, this.playerScaleX, this.preHitTime));
+    this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 6.0, 8.0, true, this.playerScaleX, this.preHitTime));
   }
 }
