@@ -21,4 +21,4 @@ app.get('/', (req, res) => res.sendFile('index.html', {root: __dirname}));
 const server = http.createServer(app);
 server.listen(port)
 server.on('listening', () => console.log('server listening on port', port, '\n'));
-server.on('error', () => console.log('an error occured, debug pls'));
+server.on('error', (error) => console.log(error));
