@@ -17,7 +17,7 @@ async function main() {
 
   const notes = new Notes(canvas, conductor.songData.crotchet, 0.25);
 
-  // const player = new Player(canvas, wave);
+  const player = new Player(canvas, 0.25);
 
   const midline = new Midline(canvas);
 
@@ -39,9 +39,13 @@ async function main() {
   // Make the game scale with the browser window.
   function resize() {
     canvasWrapper.resize();
-    notes.resize(canvas.width, canvas.height);
-    // player.resize(canvas.width, canvas.height);
+
+    // Resize static elements.
     midline.resize(canvas.width, canvas.height);
+
+    // Resize dynamic elements.
+    notes.resize(canvas.width, canvas.height);
+    player.resize(canvas.width, canvas.height);
   }
 
 
@@ -55,7 +59,7 @@ async function main() {
     // Draw dynamic elements (elements that rely on song position).
     const songPosition = conductor.position();
     notes.draw(songPosition);
-    // player.draw(songPosition);
+    player.draw(songPosition);
 
     requestAnimationFrame(update);
   }
