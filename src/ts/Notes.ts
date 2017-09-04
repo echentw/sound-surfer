@@ -22,10 +22,14 @@ export class Notes {
 
   // Time (in milliseconds) that the player has before and after the note is supposed
   // to be hit, to hit the note.
-  private hitMargin = 200;
+  // TODO: Currently this is set to 0 to make the player animation smooth. Fix this!
+  private hitMargin = 0;
 
-  // TODO: some stuff needed to instantiate waves
   private playerScaleX: number;
+
+  // The wave that the player is currently surfing on.
+  private playerWave: Wave;
+  private yOffset: number;
 
   constructor(canvas: HTMLCanvasElement, crotchet: number, playerScaleX: number) {
     this.canvas = canvas;
@@ -37,6 +41,7 @@ export class Notes {
   }
 
   resize(width: number, height: number) {
+    this.yOffset = height * 0.5;
     this.queuedNotes.forEach((wave) => wave.resize(width, height));
     this.currentNotes.forEach((wave) => wave.resize(width, height));
     this.missedNotes.forEach((wave) => wave.resize(width, height));
@@ -69,7 +74,9 @@ export class Notes {
   private updateMissedNotes(songPosition: number) {
     while (this.currentNotes.size() > 0 &&
            songPosition > this.currentNotes.peek().start + this.hitMargin) {
-      this.missedNotes.enqueue(this.currentNotes.dequeue());
+      const wave = this.currentNotes.dequeue();
+      this.playerWave = wave;
+      this.missedNotes.enqueue(wave);
     }
   }
 
@@ -87,5 +94,13 @@ export class Notes {
     this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 5.0, 5.5, true, this.playerScaleX, this.preHitTime));
     this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 5.5, 6.0, false, this.playerScaleX, this.preHitTime));
     this.queuedNotes.enqueue(new Wave(this.canvas, this.crotchet, 6.0, 8.0, true, this.playerScaleX, this.preHitTime));
+  }
+
+  getPlayerY(songPosition: number): number {
+    if (this.playerWave) {
+      return this.playerWave.getPlayerY(songPosition);
+    } else {
+      return this.yOffset;
+    }
   }
 }

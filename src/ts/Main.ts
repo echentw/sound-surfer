@@ -17,7 +17,7 @@ async function main() {
 
   const notes = new Notes(canvas, conductor.songData.crotchet, 0.25);
 
-  const player = new Player(canvas, 0.25);
+  const player = new Player(canvas, 0.25, notes);
 
   const midline = new Midline(canvas);
 

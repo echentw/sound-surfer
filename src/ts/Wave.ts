@@ -72,4 +72,14 @@ export class Wave extends DynamicGameObject {
     }
     this.context.stroke();
   }
+
+  // Used to get the player's y-position.
+  // Should only be called when this wave is passing through `playerPosition`.
+  getPlayerY(songPosition: number): number {
+    const x0 = (this.start - songPosition) / this.preHitTime * (this.canvasWidth - this.playerPosition) + this.playerPosition;
+    const x1 = (this.end - songPosition) / this.preHitTime * (this.canvasWidth - this.playerPosition) + this.playerPosition;
+    const k = Math.PI / (x1 - x0);
+
+    return this.amplitude * Math.sin(k * (this.playerPosition - x0)) + this.yOffset;
+  }
 }
