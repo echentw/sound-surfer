@@ -13,7 +13,7 @@ $(document).ready(main);
 
 async function main() {
   const gameParams: GameParams = {
-    preHitTime: 1000,
+    preHitTime: 1500,
     playerScaleX: 0.25,
     offsetScaleY: 0.5,
   };

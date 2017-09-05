@@ -101,7 +101,7 @@ export class WaveGenerator {
 
   load() {
     // TODO: load waves correctly
-    const timestamps = [3.0, 4.0, 5.0, 5.5, 6.0, 8.0];
+    const timestamps = [3.0, 3.75, 4.0, 4.75, 5.0, 5.5, 6.0, 6.25, 6.5, 7.0, 10.0, 12.0];
     for (let i = 0; i < timestamps.length - 1; ++i) {
       const start = timestamps[i];
       const end = timestamps[i + 1];

@@ -51,7 +51,7 @@ export class Wave extends DynamicGameObject {
     this.playerPosition = this.playerScaleX * width;
     this.yOffset = height * 0.5;
     this.canvasWidth = width;
-    this.amplitude = 0.15 * this.sign * (this.end - this.start) / this.preHitTime * (width - this.playerPosition);
+    this.amplitude = 0.2 * this.sign * (this.end - this.start) / this.preHitTime * (width - this.playerPosition);
   }
 
   // y = sin(k * (x - c))
