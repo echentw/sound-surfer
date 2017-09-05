@@ -13,6 +13,9 @@ export class WaveGenerator {
   // Waves that are currently being rendered.
   private currentWaves = new Collections.Queue<Wave>();
 
+  // Waves that have passed the player but can still be hit.
+  private passedWaves = new Collections.Queue<Wave>();
+
   // Waves that the player missed but are still being rendered.
   private missedWaves = new Collections.Queue<Wave>();
 
@@ -21,8 +24,7 @@ export class WaveGenerator {
 
   // Time (in milliseconds) that the player has before and after the wave is supposed
   // to be hit, to hit the wave.
-  // TODO: Currently this is set to 0 to make the player animation smooth. Fix this!
-  private hitMargin = 0;
+  private hitMargin = 100;
 
   // The number of milliseconds in a beat of the song.
   private crotchet: number;
@@ -44,6 +46,7 @@ export class WaveGenerator {
     this.yOffset = height * this.gameParams.offsetScaleY;
     this.queuedWaves.forEach((wave) => wave.resize(width, height));
     this.currentWaves.forEach((wave) => wave.resize(width, height));
+    this.passedWaves.forEach((wave) => wave.resize(width, height));
     this.missedWaves.forEach((wave) => wave.resize(width, height));
   }
 
@@ -51,6 +54,7 @@ export class WaveGenerator {
     this.update(songPosition);
 
     this.drawWaves(songPosition, this.currentWaves);
+    this.drawWaves(songPosition, this.passedWaves);
     this.drawWaves(songPosition, this.missedWaves);
   }
 
@@ -60,6 +64,7 @@ export class WaveGenerator {
 
   private update(songPosition: number) {
     this.updateCurrentWaves(songPosition);
+    this.updatePassedWaves(songPosition);
     this.updateMissedWaves(songPosition);
     this.deleteMissedWaves(songPosition);
   }
@@ -71,12 +76,19 @@ export class WaveGenerator {
     }
   }
 
-  private updateMissedWaves(songPosition: number) {
+  private updatePassedWaves(songPosition: number) {
     while (this.currentWaves.size() > 0 &&
-           songPosition > this.currentWaves.peek().start + this.hitMargin) {
+           songPosition > this.currentWaves.peek().start) {
       const wave = this.currentWaves.dequeue();
       this.playerWave = wave;
-      this.missedWaves.enqueue(wave);
+      this.passedWaves.enqueue(wave);
+    }
+  }
+
+  private updateMissedWaves(songPosition: number) {
+    while (this.passedWaves.size() > 0 &&
+           songPosition > this.passedWaves.peek().start + this.hitMargin) {
+      this.missedWaves.enqueue(this.passedWaves.dequeue());
     }
   }
 
@@ -98,6 +110,7 @@ export class WaveGenerator {
         new Wave(this.canvas, this.gameParams, start, end, this.crotchet, upright)
       );
     }
+    this.playerWave = this.queuedWaves.peek();
   }
 
   getPlayerY(songPosition: number): number {
