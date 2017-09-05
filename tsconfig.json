@@ -9,7 +9,8 @@
     "src/ts/Midline.ts",
     "src/ts/CanvasWrapper.ts",
     "src/ts/WaveGenerator.ts",
-    "src/ts/SfxPlayer.ts"
+    "src/ts/SfxPlayer.ts",
+    "src/ts/GameParams.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,

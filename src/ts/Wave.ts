@@ -1,4 +1,5 @@
 import { DynamicGameObject } from './GameObject';
+import { GameParams } from './GameParams';
 
 export class Wave extends DynamicGameObject {
   private readonly color = 'white';
@@ -21,27 +22,25 @@ export class Wave extends DynamicGameObject {
   // `playerPosition` = `playerScaleX` * (width of the canvas)
   private playerScaleX: number;
 
+  // The amount of time (ms) between when the wave enters the screen
+  // and when it's supposed supposed to be hit.
   private preHitTime: number;
 
   private amplitude: number;
-
   private sign: number;
 
-  constructor(canvas: HTMLCanvasElement,
+  constructor(canvas: HTMLCanvasElement, gameParams: GameParams,
+              start: number, end: number,
               crotchet: number,
-              start: number,
-              end: number,
-              upright: boolean,
-              playerScaleX: number,
-              preHitTime: number) {
+              upright: boolean) {
     super(canvas);
 
     this.start = start * crotchet;
     this.end = end * crotchet;
     this.duration = this.end - this.start;
 
-    this.playerScaleX = playerScaleX;
-    this.preHitTime = preHitTime;
+    this.playerScaleX = gameParams.playerScaleX;
+    this.preHitTime = gameParams.preHitTime;
 
     this.sign = upright ? 1 : -1;
 

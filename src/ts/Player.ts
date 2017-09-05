@@ -1,4 +1,5 @@
 import { DynamicGameObject } from './GameObject';
+import { GameParams } from './GameParams';
 import { WaveGenerator } from './WaveGenerator';
 
 export class Player extends DynamicGameObject {
@@ -6,26 +7,32 @@ export class Player extends DynamicGameObject {
 
   private readonly color = 'green';
 
-  private readonly scaleX: number;
-  private readonly scaleRadius: number;
-
+  // The player's x-coordinate.
+  private readonly playerScaleX: number;
   private x: number;
+
+  // The player circle's radius.
+  private readonly scaleRadius: number;
   private radius: number;
 
+  // The player's median y-coordinate.
+  private readonly offsetScaleY: number;
   private yOffset: number;
 
-  constructor(canvas: HTMLCanvasElement, playerScaleX: number, waveGenerator: WaveGenerator) {
+  constructor(canvas: HTMLCanvasElement, gameParams: GameParams, waveGenerator: WaveGenerator) {
     super(canvas)
     this.waveGenerator = waveGenerator;
-    this.scaleX = playerScaleX;
-    this.scaleRadius = this.scaleX * 0.05;
+    this.playerScaleX = gameParams.playerScaleX;
+    this.scaleRadius = gameParams.playerScaleX * 0.05;
+    this.offsetScaleY = gameParams.offsetScaleY;
+
     this.resize(canvas.width, canvas.height);
   }
 
   resize(width: number, height: number) {
-    this.x = this.scaleX * width;
+    this.x = this.playerScaleX * width;
     this.radius = this.scaleRadius * width;
-    this.yOffset = height * 0.5;
+    this.yOffset = this.offsetScaleY * height;
   }
 
   draw(songPosition: number) {
