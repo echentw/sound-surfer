@@ -28,7 +28,7 @@ async function main() {
 
   const waveGenerator = new WaveGenerator(canvas, conductor, gameParams);
   const player = new Player(canvas, gameParams, waveGenerator);
-  const midline = new Midline(canvas);
+  const midline = new Midline(canvas, gameParams);
 
   initializeGame();
   startGame();

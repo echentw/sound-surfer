@@ -1,21 +1,24 @@
 import { StaticGameObject } from './GameObject';
+import { GameParams } from './GameParams';
 
 export class Midline extends StaticGameObject {
   private readonly width = 5;
   private readonly color = 'grey';
 
   private canvasWidth: number;
+
+  private scaleY: number;
   private y: number;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, gameParams: GameParams) {
     super(canvas);
-    this.canvasWidth = canvas.width;
-    this.y = canvas.height * 0.5;
+    this.scaleY = gameParams.offsetScaleY;
+    this.resize(canvas.width, canvas.height);
   }
 
   resize(width: number, height: number) {
     this.canvasWidth = width;
-    this.y = height * 0.5;
+    this.y = this.scaleY * height;
   }
 
   draw() {
