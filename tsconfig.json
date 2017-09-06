@@ -10,7 +10,9 @@
     "src/ts/CanvasWrapper.ts",
     "src/ts/WaveGenerator.ts",
     "src/ts/SfxPlayer.ts",
-    "src/ts/GameParams.ts"
+    "src/ts/GameParams.ts",
+    "src/ts/data/SongData.ts",
+    "src/ts/data/Beatmaps.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,

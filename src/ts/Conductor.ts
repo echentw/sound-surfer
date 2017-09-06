@@ -2,32 +2,18 @@ import * as $ from 'jquery';
 import * as _ from 'lodash';
 
 import { SoundPlayer } from './SoundPlayer';
-
-interface SongData {
-  name: string;
-  tag: string;
-  numBeats: number;
-  songDurationMillis: number;
-  offsetMillis: number;
-  crotchet: number;
-}
+import { SongData, beatmaps } from './data/SongData';
 
 export class Conductor {
-  private readonly songName: string;
-
-  private musicPlayer: SoundPlayer;
   public songData: SongData;
+  private musicPlayer: SoundPlayer;
 
   constructor(songName: string) {
-    this.songName = songName;
+    this.songData = _.find(beatmaps, {'name': songName});
+    this.musicPlayer = new SoundPlayer(`assets/music/${this.songData.tag}.mp3`);
   }
 
-  async load(): Promise<string> {
-    const result = await $.get('/assets/songData.json');
-    const songDataArray = result as Array<SongData>;
-    this.songData = _.find(songDataArray, {'name': this.songName});
-
-    this.musicPlayer = new SoundPlayer(`assets/music/${this.songData.tag}.mp3`);
+  load(): Promise<string> {
     return this.musicPlayer.load();
   }
 
