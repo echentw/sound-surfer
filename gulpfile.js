@@ -48,7 +48,7 @@ function restartServer() {
 gulp.task('build', gulp.series(compileTS, bundleJS));
 
 gulp.task('watch', () => {
-  gulp.watch('./src/**/*.ts', gulp.series('build'));
+  gulp.watch('./src/ts/**/*.ts', gulp.series('build'));
 });
 
 gulp.task('default', gulp.series('build', gulp.parallel(startServer, 'watch')));
