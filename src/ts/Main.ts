@@ -1,7 +1,6 @@
 import * as $ from 'jquery';
 
 import { GameParams } from './GameParams';
-
 import { SfxPlayer } from './SfxPlayer';
 import { Conductor } from './Conductor';
 import { Player } from './Player';
@@ -24,6 +23,8 @@ async function main() {
   const conductor = new Conductor('Mijuku Dreamer');
   const tambourine = new SfxPlayer('tambourine');
   await Promise.all([conductor.load(), tambourine.load()]);
+
+  tambourine.setVolume(0.02);
 
   const waveGenerator = new WaveGenerator(canvas, conductor, gameParams);
   const player = new Player(canvas, gameParams, waveGenerator);

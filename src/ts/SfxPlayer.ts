@@ -22,4 +22,9 @@ export class SfxPlayer {
     this.players[this.currentId].play();
     this.currentId = (this.currentId + 1) % this.numPlayers;
   }
+
+  // `volume` has to be between 0 and 1.
+  setVolume(volume: number) {
+    this.players.forEach((player) => player.setVolume(volume));
+  }
 }

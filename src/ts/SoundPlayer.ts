@@ -46,4 +46,9 @@ export class SoundPlayer {
   duration(): number {
     return this.songPlayer.duration;
   }
+
+  // `volume` has to be between 0 and 1.
+  setVolume(volume: number) {
+    this.songPlayer.volume = volume;
+  }
 }
