@@ -5,6 +5,7 @@ import { SfxPlayer } from './SfxPlayer';
 import { Conductor } from './Conductor';
 import { Player } from './Player';
 import { Midline } from './Midline';
+import { Title } from './Title';
 import { CanvasWrapper } from './CanvasWrapper';
 import { WaveGenerator } from './WaveGenerator';
 
@@ -29,6 +30,7 @@ async function main() {
   const waveGenerator = new WaveGenerator(canvas, conductor, gameParams);
   const player = new Player(canvas, gameParams, waveGenerator);
   const midline = new Midline(canvas, gameParams);
+  const titleText = new Title(canvas, gameParams, "Mijuku Dreamer");
 
   initializeGame();
   startGame();
@@ -50,6 +52,7 @@ async function main() {
     midline.resize(canvas.width, canvas.height);
     waveGenerator.resize(canvas.width, canvas.height);
     player.resize(canvas.width, canvas.height);
+    titleText.resize(canvas.width, canvas.height);
   }
 
   // Called at every frame, re-renders the entire canvas.
@@ -58,6 +61,7 @@ async function main() {
 
     // Draw static elements.
     midline.draw();
+    titleText.draw();
 
     // Draw dynamic elements (elements that rely on song position).
     const songPosition = conductor.position();
