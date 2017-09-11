@@ -5,20 +5,40 @@ import { Conductor } from './Conductor';
 import { GameParams } from './GameParams';
 import { Note } from './data/Beatmaps';
 
+enum Endpoint {
+  Start,
+  End,
+}
+
+class WaveQueue extends Collections.Queue<Wave> {
+  peekTime(endpoint: Endpoint) {
+    let time: number;
+    switch(endpoint) {
+      case Endpoint.Start: {
+        time = this.peek().start;
+        break;
+      }
+      case Endpoint.End: {
+        time = this.peek().end;
+        break;
+      }
+    }
+    return time;
+  }
+}
+
 export class WaveGenerator {
   private canvas: HTMLCanvasElement;
 
-  // Waves that haven't been rendered yet.
-  private readonly queuedWaves: Collections.Queue<Wave>;
+  private readonly numWaveQueues = 6;
 
-  // Waves that are currently being rendered.
-  private readonly currentWaves = new Collections.Queue<Wave>();
-
-  // Waves that have passed the player but can still be hit.
-  private readonly passedWaves = new Collections.Queue<Wave>();
-
-  // Waves that the player missed but are still being rendered.
-  private readonly missedWaves = new Collections.Queue<Wave>();
+  // waveQueues[0]: haven't been rendered yet.
+  // waveQueues[1]: currently being rendered, but have not passed the player yet.
+  // waveQueues[2]: have passed the player, but can still be hit.
+  // waveQueues[3]: too late to be hit, but are needed to update `this.playerWave`.
+  // waveQueues[4]: aren't needed for anything, but still need to be rendered.
+  // waveQueues[5]: aren't being rendered, essentially garbage.
+  private readonly waveQueues = Array<WaveQueue>(this.numWaveQueues);
 
   // The number of milliseconds that the wave stays on the screen before it needs to get hit.
   private readonly preHitTime: number;
@@ -40,69 +60,66 @@ export class WaveGenerator {
     this.canvas = canvas;
     this.crotchet = conductor.songData.crotchet;
     this.gameParams = gameParams;
-    this.queuedWaves = this.loadBeatmap(conductor.songData.beatmap);
-    this.playerWave = this.queuedWaves.peek();
+    this.waveQueues[0] = this.loadBeatmap(conductor.songData.beatmap);
+    for (let i = 1; i < this.numWaveQueues; ++i) {
+      this.waveQueues[i] = new WaveQueue();
+    }
   }
 
   resize(width: number, height: number) {
     this.yOffset = height * this.gameParams.offsetScaleY;
-    this.queuedWaves.forEach((wave) => wave.resize(width, height));
-    this.currentWaves.forEach((wave) => wave.resize(width, height));
-    this.passedWaves.forEach((wave) => wave.resize(width, height));
-    this.missedWaves.forEach((wave) => wave.resize(width, height));
+    this.waveQueues.forEach((waveQueue) => {
+      waveQueue.forEach((wave) => wave.resize(width, height));
+    });
   }
 
   draw(songPosition: number) {
     this.update(songPosition);
-
-    this.drawWaves(songPosition, this.currentWaves);
-    this.drawWaves(songPosition, this.passedWaves);
-    this.drawWaves(songPosition, this.missedWaves);
-  }
-
-  private drawWaves(songPosition: number, waves: Collections.Queue<Wave>) {
-    waves.forEach((wave) => wave.draw(songPosition));
+    this.waveQueues.slice(1, this.numWaveQueues - 1).forEach((waveQueue) => {
+      waveQueue.forEach((wave) => wave.draw(songPosition));
+    });
   }
 
   private update(songPosition: number) {
-    this.updateCurrentWaves(songPosition);
-    this.updatePassedWaves(songPosition);
-    this.updateMissedWaves(songPosition);
-    this.deleteMissedWaves(songPosition);
-  }
+    this.updateWaveQueue(0, 1, songPosition, Endpoint.Start, -this.gameParams.preHitTime, (wave: Wave) => {});
 
-  private updateCurrentWaves(songPosition: number) {
-    while (this.queuedWaves.size() > 0 &&
-           songPosition > this.queuedWaves.peek().start - this.gameParams.preHitTime) {
-      this.currentWaves.enqueue(this.queuedWaves.dequeue());
-    }
-  }
-
-  private updatePassedWaves(songPosition: number) {
-    while (this.currentWaves.size() > 0 &&
-           songPosition > this.currentWaves.peek().start) {
-      const wave = this.currentWaves.dequeue();
+    this.updateWaveQueue(1, 2, songPosition, Endpoint.Start, 0, (wave: Wave) => {
+      // The start endpoint of the wave has just passed the player.
+      // Time to surf the wave!
       this.playerWave = wave;
-      this.passedWaves.enqueue(wave);
+    });
+
+    this.updateWaveQueue(2, 3, songPosition, Endpoint.Start, this.hitMargin, (wave: Wave) => {});
+
+    this.updateWaveQueue(3, 4, songPosition, Endpoint.End, 0, (wave: Wave) => {
+      // If `this.playerWave` has not been assigned to another wave, at this point,
+      // then this wave is the last wave.
+      if (this.playerWave == wave) {
+        this.playerWave = null;
+      }
+    });
+
+    this.updateWaveQueue(4, 5, songPosition, Endpoint.End, 500, (wave: Wave) => {});
+  }
+
+  private updateWaveQueue(queueId1: number,
+                          queueId2: number,
+                          songPosition: number,
+                          endpoint: Endpoint,
+                          timeOffset: number,
+                          callback: (wave: Wave) => void) {
+    const waveQueue1 = this.waveQueues[queueId1];
+    const waveQueue2 = this.waveQueues[queueId2];
+    while (waveQueue1.size() > 0 &&
+           songPosition > waveQueue1.peekTime(endpoint) + timeOffset) {
+      const wave = waveQueue1.dequeue();
+      callback(wave);
+      waveQueue2.enqueue(wave);
     }
   }
 
-  private updateMissedWaves(songPosition: number) {
-    while (this.passedWaves.size() > 0 &&
-           songPosition > this.passedWaves.peek().start + this.hitMargin) {
-      this.missedWaves.enqueue(this.passedWaves.dequeue());
-    }
-  }
-
-  private deleteMissedWaves(songPosition: number) {
-    while (this.missedWaves.size() > 0 &&
-           songPosition > this.missedWaves.peek().end + 500) {
-      this.missedWaves.dequeue();
-    }
-  }
-
-  loadBeatmap(beatmap: Array<Note>) {
-    const waves = new Collections.Queue<Wave>();
+  private loadBeatmap(beatmap: Array<Note>) {
+    const waves = new WaveQueue();
     for (let i = 0; i < beatmap.length - 1; ++i) {
       const start = beatmap[i].beat;
       const end = beatmap[i + 1].beat;
