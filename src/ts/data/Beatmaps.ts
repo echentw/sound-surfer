@@ -24,3 +24,15 @@ export const shapeOfYouBeatmap: Array<Note> = [
   {beat:  6.00, style: 0},
   {beat:  7.00, style: 0},
 ];
+
+export const liangLiangBeatmap: Array<Note> = [
+  {beat:  3.00, style: 0},
+  {beat:  6.00, style: 0},
+  {beat:  9.00, style: 0},
+
+  {beat: 11.00, style: 0},
+  {beat: 12.00, style: 0},
+  {beat: 13.00, style: 0},
+  {beat: 14.00, style: 0},
+  {beat: 15.00, style: 0},
+];

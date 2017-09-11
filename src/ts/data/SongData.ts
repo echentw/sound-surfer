@@ -1,4 +1,6 @@
-import { Note, mijukuDreamerBeatmap, shapeOfYouBeatmap } from './Beatmaps';
+import * as Beatmap from './Beatmaps';
+
+type Note = Beatmap.Note;
 
 export interface SongData {
   name: string;
@@ -17,7 +19,7 @@ const mijukuDreamerData: SongData = {
   songDurationMillis: 60050,
   offsetMillis: 2220,
   crotchet: 750.625,
-  beatmap: mijukuDreamerBeatmap,
+  beatmap: Beatmap.mijukuDreamerBeatmap,
 };
 
 const shapeOfYouData: SongData = {
@@ -27,7 +29,21 @@ const shapeOfYouData: SongData = {
   songDurationMillis: 12500,
   offsetMillis: 2320,
   crotchet: 416.6666666667,
-  beatmap: shapeOfYouBeatmap,
+  beatmap: Beatmap.shapeOfYouBeatmap,
 };
 
-export const beatmaps = [mijukuDreamerData, shapeOfYouData];
+const liangLiangData: SongData = {
+  name: 'Liang Liang',
+  tag: 'LiangLiang',
+  numBeats: 0,
+  songDurationMillis: 0,
+  offsetMillis: 1000,
+  crotchet: 500,
+  beatmap: Beatmap.liangLiangBeatmap,
+}
+
+export const beatmaps = [
+  mijukuDreamerData,
+  shapeOfYouData,
+  liangLiangData,
+];

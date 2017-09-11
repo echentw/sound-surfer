@@ -21,16 +21,16 @@ async function main() {
   const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
   const canvasWrapper = new CanvasWrapper(canvas);
 
-  const conductor = new Conductor('Mijuku Dreamer');
+  const conductor = new Conductor('Liang Liang');
   const tambourine = new SfxPlayer('tambourine');
   await Promise.all([conductor.load(), tambourine.load()]);
 
   tambourine.setVolume(0.02);
 
+  const midline = new Midline(canvas, gameParams);
+  const titleText = new Title(canvas, gameParams, conductor.songData.name);
   const waveGenerator = new WaveGenerator(canvas, conductor, gameParams);
   const player = new Player(canvas, gameParams, waveGenerator);
-  const midline = new Midline(canvas, gameParams);
-  const titleText = new Title(canvas, gameParams, "Mijuku Dreamer");
 
   initializeGame();
   startGame();
@@ -50,9 +50,9 @@ async function main() {
   function resize() {
     canvasWrapper.resize();
     midline.resize(canvas.width, canvas.height);
+    titleText.resize(canvas.width, canvas.height);
     waveGenerator.resize(canvas.width, canvas.height);
     player.resize(canvas.width, canvas.height);
-    titleText.resize(canvas.width, canvas.height);
   }
 
   // Called at every frame, re-renders the entire canvas.

@@ -3,8 +3,8 @@ import { GameParams } from './GameParams';
 
 export class Title extends StaticGameObject {
   private readonly color = 'grey';
+  private readonly titleText: string;
 
-  private titleText: string;
   private fontSize: number;
   private xCoord: number;
   private yCoord: number;
@@ -16,14 +16,14 @@ export class Title extends StaticGameObject {
   }
 
   resize(width: number, height: number) {
-    this.fontSize = width/25;
-    this.xCoord = width/26;
-    this.yCoord = height/10;
+    this.fontSize = width / 25;
+    this.xCoord = width / 26;
+    this.yCoord = height / 10;
   }
 
   draw() {
-    this.context.font = this.fontSize + "px Arial";
+    this.context.font = this.fontSize + 'px Arial';
     this.context.fillStyle = this.color;
-    this.context.fillText(this.titleText,this.xCoord,this.yCoord);
+    this.context.fillText(this.titleText, this.xCoord, this.yCoord);
   }
 }
