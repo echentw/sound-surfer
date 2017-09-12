@@ -2,11 +2,11 @@ import { DynamicGameObject } from './GameObject';
 import { GameParams } from './GameParams';
 
 export class Wave extends DynamicGameObject {
-  private readonly color = 'white';
-  private readonly lineWidth = 3;
+  protected readonly color = 'white';
+  protected readonly lineWidth = 3;
 
-  private canvasWidth: number;
-  private yOffset: number;
+  protected canvasWidth: number;
+  protected yOffset: number;
 
   // The timestamps (ms) that the wave's left and right endpoints should
   // reach the player circle.
@@ -17,16 +17,16 @@ export class Wave extends DynamicGameObject {
   private duration: number;
 
   // The x-coordinate of the player circle's center.
-  private playerPosition: number;
+  protected playerPosition: number;
 
   // `playerPosition` = `playerScaleX` * (width of the canvas)
   private playerScaleX: number;
 
   // The amount of time (ms) between when the wave enters the screen
   // and when it's supposed supposed to be hit.
-  private preHitTime: number;
+  protected preHitTime: number;
 
-  private amplitude: number;
+  protected amplitude: number;
   private sign: number;
 
   constructor(canvas: HTMLCanvasElement, gameParams: GameParams,

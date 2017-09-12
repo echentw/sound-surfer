@@ -1,5 +1,6 @@
 import * as Collections from 'typescript-collections';
 
+import { PreWave } from './PreWave';
 import { Wave } from './Wave';
 import { Conductor } from './Conductor';
 import { GameParams } from './GameParams';
@@ -124,6 +125,9 @@ export class WaveGenerator {
       const start = beatmap[i].beat;
       const end = beatmap[i + 1].beat;
       const upright = (i % 2 == 0) ? true : false;
+      if (i == 0) {
+        waves.enqueue(new PreWave(this.canvas, this.gameParams, start, this.crotchet, !upright));
+      }
       waves.enqueue(new Wave(this.canvas, this.gameParams, start, end, this.crotchet, upright));
     }
     return waves;

@@ -2,8 +2,8 @@ import { StaticGameObject } from './GameObject';
 import { GameParams } from './GameParams';
 
 export class Midline extends StaticGameObject {
-  private readonly width = 5;
-  private readonly color = 'grey';
+  private readonly width = 3;
+  private readonly color = 'white';
 
   private canvasWidth: number;
 
