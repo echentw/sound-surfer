@@ -7,7 +7,8 @@ import { Player } from './Player';
 import { Midline } from './Midline';
 import { Title } from './Title';
 import { CanvasWrapper } from './CanvasWrapper';
-import { WaveGenerator } from './WaveGenerator';
+import { WaveController } from './WaveController';
+import { ScoreKeeper } from './ScoreKeeper';
 
 $(document).ready(main);
 
@@ -29,8 +30,10 @@ async function main() {
 
   const midline = new Midline(canvas, gameParams);
   const titleText = new Title(canvas, gameParams, conductor.songData.name);
-  const waveGenerator = new WaveGenerator(canvas, conductor, gameParams);
-  const player = new Player(canvas, gameParams, waveGenerator);
+
+  const scoreKeeper = new ScoreKeeper();
+  const waveController = new WaveController(canvas, conductor, gameParams, scoreKeeper);
+  const player = new Player(canvas, gameParams, waveController);
 
   initializeGame();
   startGame();
@@ -49,10 +52,15 @@ async function main() {
   // Make the game scale with the browser window.
   function resize() {
     canvasWrapper.resize();
-    midline.resize(canvas.width, canvas.height);
-    titleText.resize(canvas.width, canvas.height);
-    waveGenerator.resize(canvas.width, canvas.height);
-    player.resize(canvas.width, canvas.height);
+
+    const width = canvas.width;
+    const height = canvas.height;
+
+    midline.resize(width, height);
+    titleText.resize(width, height);
+    scoreKeeper.resize(width, height);
+    waveController.resize(width, height);
+    player.resize(width, height);
   }
 
   // Called at every frame, re-renders the entire canvas.
@@ -62,10 +70,11 @@ async function main() {
     // Draw static elements.
     midline.draw();
     titleText.draw();
+    scoreKeeper.draw();
 
     // Draw dynamic elements (elements that rely on song position).
     const songPosition = conductor.position();
-    waveGenerator.draw(songPosition);
+    waveController.draw(songPosition);
     player.draw(songPosition);
 
     requestAnimationFrame(update);
@@ -75,6 +84,7 @@ async function main() {
   document.addEventListener('keydown', (e) => {
     if (e.keyCode == 32) {
       // Spacebar is pressed
+      waveController.hit(conductor.position());
       tambourine.play();
     }
   });

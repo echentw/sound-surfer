@@ -6,10 +6,11 @@ import { Wave } from './Wave';
 import { Conductor } from './Conductor';
 import { GameParams } from './GameParams';
 import { Note } from './data/Beatmaps';
+import { HitType, ScoreKeeper } from './ScoreKeeper';
 
 enum Endpoint {
   Start,
-  End,
+  End
 }
 
 class WaveQueue extends Collections.Queue<Wave> {
@@ -29,7 +30,7 @@ class WaveQueue extends Collections.Queue<Wave> {
   }
 }
 
-export class WaveGenerator {
+export class WaveController {
   private canvas: HTMLCanvasElement;
 
   private readonly numWaveQueues = 6;
@@ -58,7 +59,13 @@ export class WaveGenerator {
   private playerWave: Wave;
   private yOffset: number;
 
-  constructor(canvas: HTMLCanvasElement, conductor: Conductor, gameParams: GameParams) {
+  // Keeps the score.
+  private scoreKeeper: ScoreKeeper;
+
+  constructor(canvas: HTMLCanvasElement,
+              conductor: Conductor,
+              gameParams: GameParams,
+              scoreKeeper: ScoreKeeper) {
     this.canvas = canvas;
     this.crotchet = conductor.songData.crotchet;
     this.gameParams = gameParams;
@@ -66,6 +73,7 @@ export class WaveGenerator {
     for (let i = 1; i < this.numWaveQueues; ++i) {
       this.waveQueues[i] = new WaveQueue();
     }
+    this.scoreKeeper = scoreKeeper;
   }
 
   resize(width: number, height: number) {
@@ -146,5 +154,10 @@ export class WaveGenerator {
     } else {
       return this.yOffset;
     }
+  }
+
+  hit(songPosition: number) {
+    // TODO: do this correctly
+    this.scoreKeeper.update(HitType.Good);
   }
 }
