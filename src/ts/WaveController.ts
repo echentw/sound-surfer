@@ -33,15 +33,24 @@ class WaveQueue extends Collections.Queue<Wave> {
 export class WaveController {
   private canvas: HTMLCanvasElement;
 
-  private readonly numWaveQueues = 6;
+  // `cosmeticWaves` are the wave queues used to keep track of waves to be rendered.
+  private readonly numCosmeticWaveQueues = 5
 
-  // waveQueues[0]: haven't been rendered yet.
-  // waveQueues[1]: currently being rendered, but have not passed the player yet.
-  // waveQueues[2]: have passed the player, but can still be hit.
-  // waveQueues[3]: too late to be hit, but are needed to update `this.playerWave`.
-  // waveQueues[4]: aren't needed for anything, but still need to be rendered.
-  // waveQueues[5]: aren't being rendered, essentially garbage.
-  private readonly waveQueues = Array<WaveQueue>(this.numWaveQueues);
+  // `hittableWaves` are the wave queues used to keep track of which waves can be hit.
+  private readonly numHittableWaveQueues = 3
+
+  // cosmeticWaves[0]: haven't been rendered yet.
+  // cosmeticWaves[1]: currently being rendered, but have not passed the player yet.
+  // cosmeticWaves[2]: have passed the player.
+  // cosmeticWaves[3]: aren't being used to compute the player's y-position.
+  // cosmeticWaves[4]: aren't being rendered, essentially garbage.
+  private readonly cosmeticWaves = Array<WaveQueue>(this.numCosmeticWaveQueues);
+
+  // hittableWaves[0]: cannot be hit yet.
+  // hittableWaves[1]: can be hit.
+  // hittableWaves[1]: cannot be hit anymore, essentially garbage.
+  private readonly hittableWaves = Array<WaveQueue>(this.numHittableWaveQueues);
+
 
   // The number of milliseconds that the wave stays on the screen before it needs to get hit.
   private readonly preHitTime: number;
@@ -69,62 +78,77 @@ export class WaveController {
     this.canvas = canvas;
     this.crotchet = conductor.songData.crotchet;
     this.gameParams = gameParams;
-    this.waveQueues[0] = this.loadBeatmap(conductor.songData.beatmap);
-    for (let i = 1; i < this.numWaveQueues; ++i) {
-      this.waveQueues[i] = new WaveQueue();
+    this.cosmeticWaves[0] = this.loadBeatmap(conductor.songData.beatmap);
+    for (let i = 1; i < this.numCosmeticWaveQueues; ++i) {
+      this.cosmeticWaves[i] = new WaveQueue();
+    }
+    this.hittableWaves[0] = this.loadBeatmap(conductor.songData.beatmap);
+    for (let i = 1; i < this.numHittableWaveQueues; ++i) {
+      this.hittableWaves[i] = new WaveQueue();
     }
     this.scoreKeeper = scoreKeeper;
   }
 
   resize(width: number, height: number) {
     this.yOffset = height * this.gameParams.offsetScaleY;
-    this.waveQueues.forEach((waveQueue) => {
+    this.cosmeticWaves.forEach((waveQueue) => {
       waveQueue.forEach((wave) => wave.resize(width, height));
     });
   }
 
   draw(songPosition: number) {
     this.update(songPosition);
-    this.waveQueues.slice(1, this.numWaveQueues - 1).forEach((waveQueue) => {
+    this.cosmeticWaves.slice(1, this.numCosmeticWaveQueues - 1).forEach((waveQueue) => {
       waveQueue.forEach((wave) => wave.draw(songPosition));
     });
   }
 
   private update(songPosition: number) {
-    this.updateWaveQueue(0, 1, songPosition, Endpoint.Start, -this.gameParams.preHitTime, (wave: Wave) => {});
-
-    this.updateWaveQueue(1, 2, songPosition, Endpoint.Start, 0, (wave: Wave) => {
+    this.updateCosmetics(0, 1, songPosition, Endpoint.Start, -this.gameParams.preHitTime, (wave: Wave) => {});
+    this.updateCosmetics(1, 2, songPosition, Endpoint.Start, 0, (wave: Wave) => {
       // The start endpoint of the wave has just passed the player.
       // Time to surf the wave!
       this.playerWave = wave;
     });
-
-    this.updateWaveQueue(2, 3, songPosition, Endpoint.Start, this.hitMargin, (wave: Wave) => {});
-
-    this.updateWaveQueue(3, 4, songPosition, Endpoint.End, 0, (wave: Wave) => {
+    this.updateCosmetics(2, 3, songPosition, Endpoint.End, 0, (wave: Wave) => {
       // If `this.playerWave` has not been assigned to another wave, at this point,
       // then this wave is the last wave.
       if (this.playerWave == wave) {
         this.playerWave = null;
       }
     });
+    this.updateCosmetics(3, 4, songPosition, Endpoint.End, 500, (wave: Wave) => {});
 
-    this.updateWaveQueue(4, 5, songPosition, Endpoint.End, 500, (wave: Wave) => {});
+    this.updateHittables(0, 1, songPosition, Endpoint.Start, -this.gameParams.preHitTime);
+    this.updateHittables(1, 2, songPosition, Endpoint.Start, this.hitMargin);
   }
 
-  private updateWaveQueue(queueId1: number,
+  private updateCosmetics(queueId1: number,
                           queueId2: number,
                           songPosition: number,
                           endpoint: Endpoint,
                           timeOffset: number,
                           callback: (wave: Wave) => void) {
-    const waveQueue1 = this.waveQueues[queueId1];
-    const waveQueue2 = this.waveQueues[queueId2];
+    const waveQueue1 = this.cosmeticWaves[queueId1];
+    const waveQueue2 = this.cosmeticWaves[queueId2];
     while (waveQueue1.size() > 0 &&
            songPosition > waveQueue1.peekTime(endpoint) + timeOffset) {
       const wave = waveQueue1.dequeue();
       callback(wave);
       waveQueue2.enqueue(wave);
+    }
+  }
+
+  private updateHittables(queueId1: number,
+                          queueId2: number,
+                          songPosition: number,
+                          endpoint: Endpoint,
+                          timeOffset: number) {
+    const waveQueue1 = this.hittableWaves[queueId1];
+    const waveQueue2 = this.hittableWaves[queueId2];
+    while (waveQueue1.size() > 0 &&
+           songPosition > waveQueue1.peekTime(endpoint) + timeOffset) {
+      waveQueue2.enqueue(waveQueue1.dequeue());
     }
   }
 
@@ -157,7 +181,15 @@ export class WaveController {
   }
 
   hit(songPosition: number) {
-    // TODO: do this correctly
-    this.scoreKeeper.update(HitType.Good);
+    if (this.hittableWaves[1].size() > 0 &&
+        this.hittableWaves[1].peekTime(Endpoint.Start) < songPosition + this.hitMargin) {
+      const wave = this.hittableWaves[1].dequeue();
+      this.hittableWaves[2].enqueue(wave);
+      this.scoreKeeper.update(HitType.Good);
+      console.log('good hit!');
+    } else {
+      this.scoreKeeper.update(HitType.Bad);
+      console.log('bad hit!');
+    }
   }
 }
