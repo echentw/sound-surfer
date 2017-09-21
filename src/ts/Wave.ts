@@ -1,5 +1,5 @@
 import { DynamicGameObject } from './GameObject';
-import { GameParams } from './GameParams';
+import { GameParams } from './Interfaces';
 
 export class Wave extends DynamicGameObject {
   protected readonly color = 'white';

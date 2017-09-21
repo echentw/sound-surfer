@@ -1,5 +1,5 @@
 import { StaticGameObject } from './GameObject';
-import { GameParams } from './GameParams';
+import { GameParams } from './Interfaces';
 
 export class Midline extends StaticGameObject {
   private readonly width = 3;

@@ -1,5 +1,5 @@
 import { DynamicGameObject } from './GameObject';
-import { GameParams } from './GameParams';
+import { GameParams } from './Interfaces';
 import { WaveController } from './WaveController';
 
 export class Player extends DynamicGameObject {
@@ -20,7 +20,7 @@ export class Player extends DynamicGameObject {
   private yOffset: number;
 
   constructor(canvas: HTMLCanvasElement, gameParams: GameParams, waveController: WaveController) {
-    super(canvas)
+    super(canvas);
     this.waveController = waveController;
     this.playerScaleX = gameParams.playerScaleX;
     this.scaleRadius = gameParams.playerScaleX * 0.05;

@@ -1,5 +1,5 @@
 import { Wave } from './Wave';
-import { GameParams } from './GameParams';
+import { GameParams } from './Interfaces';
 
 // To understand this file, look at PreWave.ts.
 // This was essentially copy/pasted from that with some tweaks.

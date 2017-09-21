@@ -1,7 +1,4 @@
-export enum HitType {
-  Good,
-  Bad
-}
+import { HitResult } from './Interfaces';
 
 export class ScoreKeeper {
   public currentStreak: number;
@@ -25,21 +22,16 @@ export class ScoreKeeper {
     // TODO: implement me!
   }
 
-  update(hitType: HitType) {
-    switch(hitType) {
-      case HitType.Good: {
-        this.numGood += 1;
-        this.currentStreak += 1;
-        if (this.longestStreak < this.currentStreak) {
-          this.longestStreak = this.currentStreak;
-        }
-        break;
+  register(result: HitResult) {
+    if (result.success) {
+      this.numGood += 1;
+      this.currentStreak += 1;
+      if (this.longestStreak < this.currentStreak) {
+        this.longestStreak = this.currentStreak;
       }
-      case HitType.Bad: {
-        this.numBad += 1;
-        this.currentStreak = 0;
-        break;
-      }
+    } else {
+      this.numBad += 1;
+      this.currentStreak = 0;
     }
   }
 }

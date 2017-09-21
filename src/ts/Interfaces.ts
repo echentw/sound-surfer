@@ -9,3 +9,12 @@ export interface GameParams {
   // offsetScaleY * canvas.height == y-coordinate of the median of the waves.
   offsetScaleY: number;
 }
+
+export interface HitResult {
+  // True == good, False == bad
+  success: boolean;
+
+  // If the success, then this is the timestamp of the note
+  // that was hit.
+  timestamp?: number;
+}

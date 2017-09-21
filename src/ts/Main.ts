@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 
-import { GameParams } from './GameParams';
+import { GameParams } from './Interfaces';
 import { SfxPlayer } from './SfxPlayer';
 import { Conductor } from './Conductor';
 import { Player } from './Player';
@@ -9,6 +9,7 @@ import { Title } from './Title';
 import { CanvasWrapper } from './CanvasWrapper';
 import { WaveController } from './WaveController';
 import { ScoreKeeper } from './ScoreKeeper';
+import { Splash } from './Splash';
 
 $(document).ready(main);
 
@@ -32,8 +33,9 @@ async function main() {
   const titleText = new Title(canvas, gameParams, conductor.songData.name);
 
   const scoreKeeper = new ScoreKeeper();
-  const waveController = new WaveController(canvas, conductor, gameParams, scoreKeeper);
+  const waveController = new WaveController(canvas, conductor, gameParams);
   const player = new Player(canvas, gameParams, waveController);
+  const splash = new Splash(canvas, gameParams);
 
   initializeGame();
   startGame();
@@ -61,6 +63,7 @@ async function main() {
     scoreKeeper.resize(width, height);
     waveController.resize(width, height);
     player.resize(width, height);
+    splash.resize(width, height);
   }
 
   // Called at every frame, re-renders the entire canvas.
@@ -76,6 +79,7 @@ async function main() {
     const songPosition = conductor.position();
     waveController.draw(songPosition);
     player.draw(songPosition);
+    splash.draw(songPosition);
 
     requestAnimationFrame(update);
   }
@@ -84,7 +88,10 @@ async function main() {
   document.addEventListener('keydown', (e) => {
     if (e.keyCode == 32) {
       // Spacebar is pressed
-      waveController.hit(conductor.position());
+      const songPosition = conductor.position();
+      const hit = waveController.hit(songPosition);
+      scoreKeeper.register(hit);
+      splash.hit(hit, songPosition);
       tambourine.play();
     }
   });

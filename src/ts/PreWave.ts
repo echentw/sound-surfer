@@ -1,5 +1,5 @@
 import { Wave } from './Wave';
-import { GameParams } from './GameParams';
+import { GameParams } from './Interfaces';
 
 // Equations
 // For 0 <= x <= l0:

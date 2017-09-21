@@ -4,9 +4,8 @@ import { PreWave } from './PreWave';
 import { PostWave } from './PostWave';
 import { Wave } from './Wave';
 import { Conductor } from './Conductor';
-import { GameParams } from './GameParams';
+import { GameParams, HitResult } from './Interfaces';
 import { Note } from './data/Beatmaps';
-import { HitType, ScoreKeeper } from './ScoreKeeper';
 
 enum Endpoint {
   Start,
@@ -68,13 +67,7 @@ export class WaveController {
   private playerWave: Wave;
   private yOffset: number;
 
-  // Keeps the score.
-  private scoreKeeper: ScoreKeeper;
-
-  constructor(canvas: HTMLCanvasElement,
-              conductor: Conductor,
-              gameParams: GameParams,
-              scoreKeeper: ScoreKeeper) {
+  constructor(canvas: HTMLCanvasElement, conductor: Conductor, gameParams: GameParams) {
     this.canvas = canvas;
     this.crotchet = conductor.songData.crotchet;
     this.gameParams = gameParams;
@@ -86,7 +79,6 @@ export class WaveController {
     for (let i = 1; i < this.numHittableWaveQueues; ++i) {
       this.hittableWaves[i] = new WaveQueue();
     }
-    this.scoreKeeper = scoreKeeper;
   }
 
   resize(width: number, height: number) {
@@ -180,16 +172,19 @@ export class WaveController {
     }
   }
 
-  hit(songPosition: number) {
+  hit(songPosition: number): HitResult {
     if (this.hittableWaves[1].size() > 0 &&
         this.hittableWaves[1].peekTime(Endpoint.Start) < songPosition + this.hitMargin) {
       const wave = this.hittableWaves[1].dequeue();
       this.hittableWaves[2].enqueue(wave);
-      this.scoreKeeper.update(HitType.Good);
-      console.log('good hit!');
+      return {
+        success: true,
+        timestamp: wave.start,
+      }
     } else {
-      this.scoreKeeper.update(HitType.Bad);
-      console.log('bad hit!');
+      return {
+        success: false,
+      }
     }
   }
 }
